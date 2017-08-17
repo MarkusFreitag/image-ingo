@@ -16,6 +16,8 @@ Usage: image-ingo [OPTIONS] SOURCEPATH DESTINATIONPATH
 Options:
   -t, --topic TEXT         Specify the topic of source images.  [required]
   -p, --photographer TEXT  Photographer that took the images.
+  --offset TEXT            Specify a time offset like -0100(-1h) or +0130
+                           (+1h30min)
   --no-preview             Disable the preview for destination files.
   --no-progress            Disable the progress bar while copying files.
   -h, --help               Show this message and exit.
