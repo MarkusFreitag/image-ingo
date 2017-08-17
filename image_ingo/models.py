@@ -1,6 +1,8 @@
 import click
 import exifread
 import os
+from datetime import datetime as dt
+from datetime import timedelta as td
 from shutil import copyfile
 
 
@@ -47,10 +49,20 @@ class Image():
     def filename(self):
         return self.source_file.name.split('.')[0]
 
-    def parse_exif_data(self):
+    def parse_exif_data(self, offset=None):
         with open(self.__source_file.absolute_path, 'rb') as file_:
             tags = exifread.process_file(file_, details=False, stop_tag='DateTimeOriginal')
-            self.__timestamp = str(tags['EXIF DateTimeOriginal']).replace(':', '-').replace(' ', '_')
+            if offset:
+                tstp = str(tags['EXIF DateTimeOriginal']).replace(':', '-').replace(' ', '_')
+                date  = dt.strptime(tstp, '%Y-%m-%d_%H-%M-%S')
+                diff = td(minutes=60*int(offset[1:3])+int(offset[3:]))
+                if offset.startswith('+'):
+                    date += diff
+                elif offset.startswith('-'):
+                    date -= diff
+                self.__timestamp = dt.strftime(date, '%Y-%m-%d_%H-%M-%S')
+            else:
+                self.__timestamp = str(tags['EXIF DateTimeOriginal']).replace(':', '-').replace(' ', '_')
 
     def show(self):
         return '{} | {} -> {}'.format(self.timestamp,
@@ -88,9 +100,9 @@ class ImageList():
                     self.add_image(file_, path)
         self.images.sort(key=lambda x: x.filename)
 
-    def process(self):
+    def process(self, offset=None):
         for index, img in enumerate(self.images):
-            img.parse_exif_data()
+            img.parse_exif_data(offset=offset)
             img.create_destination_file(str(self.__starting_img_id+index+1), self.destination_path)
 
     def preview(self):
