@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='image-ingo',
-      version='0.1.0',
+      version='0.1.1',
       description='Python3 script for sorting images.',
       author='Markus Freitag',
       author_email='fmarkus@mailbox.org',
